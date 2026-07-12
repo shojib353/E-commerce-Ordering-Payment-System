@@ -249,7 +249,7 @@ FRONTEND_URL=https://e-commerce-ordering-payment-system.vercel.app
    ```bash
    python manage.py seed_db
    ```
-   *Note: This command registers an Admin User (`admin@example.com` / `admin12345`) and populates nested categories (Electronics -> Phones -> iPhones, etc.) along with products.*
+   *Note: This command registers an Admin User (`admin@ecomricco.com` / `adminpassword123`) and populates nested categories (Electronics -> Phones -> iPhones, etc.) along with products.*
 
 4. **Start Caching (Redis)**:
    Ensure your local Redis server is running on `127.0.0.1:6379`.
