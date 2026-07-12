@@ -197,7 +197,7 @@ class BkashPaymentStrategy(BasePaymentStrategy):
             body = {
                 "mode": "0011",
                 "payerReference": str(order.user.id),
-                "callbackURL": kwargs.get('callback_url', "http://localhost:8000/api/payments/webhook/bkash/"),
+                "callbackURL": kwargs.get('callback_url', "https://enable-chastise-backpedal.ngrok-free.dev/api/payments/webhook/bkash/"),
                 "amount": str(order.total_amount),
                 "currency": "BDT",
                 "intent": "sale",
