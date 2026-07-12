@@ -1,11 +1,17 @@
 from rest_framework import viewsets, permissions, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from drf_spectacular.utils import extend_schema, OpenApiParameter
+from drf_spectacular.utils import extend_schema, OpenApiParameter, extend_schema_view
 from apps.catalog.models import Category, Product
 from apps.catalog.serializers import CategorySerializer, ProductSerializer
 from apps.catalog.services import get_category_descendants_dfs
 
+@extend_schema_view(
+    create=extend_schema(summary="Create a new category (Admin Only)", description="Create a category. Restrict to Admin/Staff users."),
+    update=extend_schema(summary="Update a category (Admin Only)", description="Update a category's details. Restrict to Admin/Staff users."),
+    partial_update=extend_schema(summary="Partially update a category (Admin Only)", description="Partially update a category's details. Restrict to Admin/Staff users."),
+    destroy=extend_schema(summary="Delete a category (Admin Only)", description="Delete a category. Restrict to Admin/Staff users."),
+)
 class CategoryViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.all().order_by('name')
     serializer_class = CategorySerializer
@@ -17,6 +23,12 @@ class CategoryViewSet(viewsets.ModelViewSet):
     
     
 
+@extend_schema_view(
+    create=extend_schema(summary="Create a new product (Admin Only)", description="Create a product. Restrict to Admin/Staff users."),
+    update=extend_schema(summary="Update a product (Admin Only)", description="Update a product's details. Restrict to Admin/Staff users."),
+    partial_update=extend_schema(summary="Partially update a product (Admin Only)", description="Partially update a product's details. Restrict to Admin/Staff users."),
+    destroy=extend_schema(summary="Delete a product (Admin Only)", description="Delete a product. Restrict to Admin/Staff users."),
+)
 class ProductViewSet(viewsets.ModelViewSet):
     queryset = Product.objects.all().order_by('-created_at')
     serializer_class = ProductSerializer
