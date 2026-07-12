@@ -186,4 +186,4 @@ BKASH_PASSWORD = env('BKASH_PASSWORD')
 BKASH_BASE_URL = env('BKASH_BASE_URL')
 
 # Frontend Configuration
-FRONTEND_URL = env('FRONTEND_URL', default='http://localhost:5500')
+FRONTEND_URL = env('FRONTEND_URL', default='https://e-commerce-ordering-payment-system.vercel.app')

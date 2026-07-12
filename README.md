@@ -263,15 +263,12 @@ FRONTEND_URL=https://e-commerce-ordering-payment-system.vercel.app
 
 ## 🌐 Running the Frontend Application
 
-The frontend is a static page located in `/Frontend/index.html`. 
-To run it:
-1. Use VS Code's **Live Server** extension, or run a simple Python server from the `Frontend` directory:
-   ```bash
-   cd Frontend
-   python -m http.server 5500
-   ```
-2. Open `http://localhost:5500` in your web browser.
-3. The UI will connect to the backend running on `http://localhost:8000`.
+The production frontend application is deployed and hosted on Vercel:
+👉 **[https://e-commerce-ordering-payment-system.vercel.app/](https://e-commerce-ordering-payment-system.vercel.app/)**
+
+The UI is configured to connect to your backend API server (e.g., running on `http://localhost:8000` or via an ngrok public URL).
+
+*Note: For local development, you can still open the `/Frontend/index.html` file using VS Code's **Live Server** extension, or run a local web server (e.g. `python -m http.server 5500`) in the `Frontend/` directory.*
 
 ---
 

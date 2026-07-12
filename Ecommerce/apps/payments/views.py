@@ -236,5 +236,5 @@ class BkashWebhookView(APIView):
             process_payment_failure(payment.id)
 
         from django.shortcuts import redirect
-        frontend_url = getattr(settings, 'FRONTEND_URL', 'http://localhost:5500')
+        frontend_url = getattr(settings, 'FRONTEND_URL', 'https://e-commerce-ordering-payment-system.vercel.app')
         return redirect(f"{frontend_url}/?payment_id={payment.id}&status={payment.status}")
