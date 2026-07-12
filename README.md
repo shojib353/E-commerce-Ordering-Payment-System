@@ -206,8 +206,8 @@ BKASH_PASSWORD=...
 BKASH_BASE_URL=https://tokenized.sandbox.bka.sh/v1.2.0-beta/tokenized
 
 # Allowed origins
-CSRF_TRUSTED_ORIGINS=http://localhost:8000,http://127.0.0.1:8000,https://*.ngrok-free.app
-FRONTEND_URL=http://localhost:5500
+CSRF_TRUSTED_ORIGINS=http://localhost:8000,http://127.0.0.1:8000,https://*.ngrok-free.app,https://e-commerce-ordering-payment-system.vercel.app
+FRONTEND_URL=https://e-commerce-ordering-payment-system.vercel.app
 ```
 
 ---
