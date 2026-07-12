@@ -1,0 +1,47 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: ecom_postgres_db
+    restart: always
+    environment:
+      POSTGRES_DB: ecom_ricco_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 12345678
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7-alpine
+    container_name: ecom_redis_cache
+    restart: always
+    ports:
+      - "6379:6379"
+
+  web:
+    build: .
+    container_name: ecom_django_web
+    restart: always
+    command: >
+      sh -c "python manage.py migrate &&
+             python manage.py seed_db &&
+             python manage.py runserver 0.0.0.0:8000"
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=postgres://postgres:12345678@db:5432/ecom_ricco_db
+      - REDIS_URL=redis://redis:6379/0
+      - DEBUG=True
+    env_file:
+      - .env
+    depends_on:
+      - db
+      - redis
+
+volumes:
+  postgres_data:

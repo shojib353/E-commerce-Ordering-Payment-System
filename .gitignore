@@ -1,0 +1,40 @@
+# Environments
+.env
+.env.*
+.venv/
+venv/
+env/
+ENV/
+*.env
+*.local
+
+# Python compiled files
+**/__pycache__/
+**/*.py[cod]
+**/*$py.class
+
+# OS metadata
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# IDEs and editors
+.idea/
+.vscode/
+*.swp
+*.swo
+*.sublime-project
+*.sublime-workspace
+
+# Databases
+**/db.sqlite3
+**/db.sqlite3-journal
+
+# Local logs
+*.log
+logs/
+**/logs/
+
+# Django media and static directories (collected static assets)
+**/staticfiles/
+**/media/

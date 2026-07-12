@@ -1,0 +1,1813 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>E-commerce — Shop, in order.</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600;700&display=swap');
+
+  :root {
+    --ink-900: #F8FAFC;
+    --ink-850: #F1F5F9;
+    --ink-800: #FFFFFF;
+    --ink-700: #E2E8F0;
+    --ink-600: #CBD5E1;
+    --paper: #0F172A;
+    --paper-dim: #475569;
+    --signal: #4F46E5;
+    --signal-dim: #4338CA;
+    --amber: #D97706;
+    --danger: #DC2626;
+    
+    --radius-lg: 12px;
+    --radius-md: 8px;
+    --radius-sm: 4px;
+    
+    --disp: 'Space Grotesk', sans-serif;
+    --mono: 'IBM Plex Mono', monospace;
+    --body: 'Inter', sans-serif;
+
+    --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    margin: 0;
+    background: var(--ink-900);
+    background-image: radial-gradient(circle at top right, rgba(79, 70, 229, 0.05), transparent 600px),
+                      radial-gradient(circle at bottom left, rgba(217, 119, 6, 0.03), transparent 500px);
+    color: var(--paper);
+    font-family: var(--body);
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.5;
+  }
+  a {
+    color: inherit;
+    text-decoration: none;
+    transition: var(--transition);
+  }
+  a:hover {
+    color: var(--signal);
+  }
+
+  /* ---------- top bar ---------- */
+  .topbar {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 40px;
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+    transition: var(--transition);
+  }
+  .brand {
+    font-family: var(--disp);
+    font-weight: 700;
+    font-size: 22px;
+    letter-spacing: 0.08em;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    user-select: none;
+  }
+  .brand .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--signal);
+    box-shadow: 0 0 12px var(--signal), 0 0 20px rgba(79, 70, 229, 0.4);
+    display: inline-block;
+  }
+  .nav-actions {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    font-family: var(--mono);
+    font-size: 13px;
+  }
+  .nav-actions button {
+    background: var(--ink-800);
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    color: var(--paper);
+    padding: 8px 16px;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 500;
+    transition: var(--transition);
+  }
+  .nav-actions button:hover {
+    border-color: var(--signal);
+    color: var(--signal);
+    background: rgba(79, 70, 229, 0.04);
+    transform: translateY(-1px);
+  }
+  .nav-actions button.primary {
+    background: var(--signal);
+    color: #FFFFFF;
+    border-color: var(--signal);
+    font-weight: 600;
+  }
+  .nav-actions button.primary:hover {
+    background: var(--signal-dim);
+    border-color: var(--signal-dim);
+    color: #FFFFFF;
+    box-shadow: 0 4px 15px rgba(79, 70, 229, 0.3);
+  }
+  .cart-btn {
+    position: relative;
+  }
+  .cart-count {
+    position: absolute;
+    top: -6px;
+    right: -8px;
+    background: var(--amber);
+    color: #FFFFFF;
+    font-size: 9px;
+    font-weight: 700;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  }
+  .user-chip {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--paper-dim);
+    background: var(--ink-850);
+    padding: 6px 12px;
+    border-radius: var(--radius-md);
+    border: 1px solid rgba(0, 0, 0, 0.04);
+    max-width: 180px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* ---------- hero ---------- */
+  .hero {
+    position: relative;
+    padding: 120px 40px 100px;
+    overflow: hidden;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  }
+  .hero-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 40px;
+    align-items: center;
+    max-width: 800px;
+    margin: 0 auto;
+    text-align: center;
+    position: relative;
+    z-index: 2;
+  }
+  .eyebrow {
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--signal);
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+  }
+  .hero h1 {
+    font-family: var(--disp);
+    font-weight: 700;
+    font-size: clamp(38px, 5.5vw, 68px);
+    line-height: 1.05;
+    margin: 0 0 24px;
+    letter-spacing: -0.02em;
+  }
+  .hero h1 em {
+    font-style: normal;
+    color: var(--signal);
+    position: relative;
+    display: inline-block;
+  }
+  .hero h1 em::after {
+    content: "";
+    position: absolute;
+    bottom: 4px;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: rgba(79, 70, 229, 0.1);
+    border-radius: 2px;
+  }
+  .hero p {
+    font-size: 16px;
+    line-height: 1.65;
+    color: var(--paper-dim);
+    max-width: 500px;
+    margin: 0 auto 36px;
+  }
+  .hero-cta {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+  }
+  .btn-solid {
+    background: var(--signal);
+    color: #FFFFFF;
+    border: 1px solid var(--signal);
+    padding: 14px 28px;
+    font-family: var(--mono);
+    font-weight: 600;
+    font-size: 13px;
+    letter-spacing: .02em;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: var(--transition);
+  }
+  .btn-solid:hover:not(:disabled) {
+    background: var(--signal-dim);
+    border-color: var(--signal-dim);
+    box-shadow: 0 4px 20px rgba(79, 70, 229, 0.25);
+    transform: translateY(-2px);
+  }
+  .btn-solid:disabled {
+    background: var(--ink-700);
+    border-color: var(--ink-700);
+    color: var(--paper-dim);
+    cursor: not-allowed;
+  }
+  .btn-ghost {
+    background: var(--ink-800);
+    color: var(--paper);
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    padding: 14px 28px;
+    font-family: var(--mono);
+    font-size: 13px;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: var(--transition);
+  }
+  .btn-ghost:hover {
+    border-color: var(--signal);
+    color: var(--signal);
+    background: rgba(79, 70, 229, 0.03);
+    transform: translateY(-2px);
+  }
+  .waveform {
+    height: 140px;
+    display: flex;
+    align-items: flex-end;
+    gap: 4px;
+    padding: 10px 0;
+  }
+  .waveform span {
+    flex: 1;
+    background: linear-gradient(180deg, var(--signal), rgba(79, 70, 229, 0.2));
+    border-radius: 2px;
+    box-shadow: 0 0 8px rgba(79, 70, 229, 0.08);
+  }
+  .hero-panel {
+    background: var(--ink-800);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    padding: 32px;
+    border-radius: var(--radius-lg);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.03), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  }
+  .hero-panel .label {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--paper-dim);
+    text-transform: uppercase;
+    letter-spacing: .12em;
+    margin-bottom: 20px;
+  }
+  .freq-row {
+    display: flex;
+    justify-content: space-between;
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--paper-dim);
+    margin-top: 20px;
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
+    padding-top: 12px;
+  }
+
+  /* ---------- section shell ---------- */
+  section {
+    padding: 80px 40px;
+  }
+  .section-head {
+    max-width: 1180px;
+    margin: 0 auto 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+  .section-head h2 {
+    font-family: var(--disp);
+    font-size: 32px;
+    margin: 0;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+  }
+  .section-head .idx {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--signal);
+    background: rgba(79, 70, 229, 0.06);
+    padding: 4px 10px;
+    border-radius: 12px;
+    border: 1px solid rgba(79, 70, 229, 0.1);
+  }
+
+  /* ---------- catalog ---------- */
+  .cat-tabs {
+    max-width: 1180px;
+    margin: 0 auto 32px;
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .cat-tabs button {
+    background: var(--ink-800);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    color: var(--paper-dim);
+    padding: 10px 20px;
+    border-radius: 30px;
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition);
+  }
+  .cat-tabs button:hover {
+    border-color: rgba(0, 0, 0, 0.15);
+    color: var(--paper);
+    background: var(--ink-850);
+  }
+  .cat-tabs button.active {
+    border-color: var(--signal);
+    color: var(--signal);
+    background: rgba(79, 70, 229, 0.06);
+    box-shadow: 0 0 10px rgba(79, 70, 229, 0.05);
+  }
+  .grid {
+    max-width: 1180px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 20px;
+    background: none;
+    border: none;
+  }
+  .card {
+    background: var(--ink-800);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    padding: 26px;
+    border-radius: var(--radius-lg);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    min-height: 250px;
+    transition: var(--transition);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+    position: relative;
+    overflow: hidden;
+  }
+  .card::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; right: 0; height: 3px;
+    background: var(--signal);
+    opacity: 0;
+    transition: var(--transition);
+  }
+  .card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(79, 70, 229, 0.2);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.06), 0 0 15px rgba(79, 70, 229, 0.02);
+  }
+  .card:hover::before {
+    opacity: 1;
+  }
+  .card .sku {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--paper-dim);
+    letter-spacing: 0.05em;
+  }
+  .card h3 {
+    font-family: var(--disp);
+    font-size: 20px;
+    margin: 4px 0 0;
+    font-weight: 600;
+    line-height: 1.3;
+  }
+  .card .stock {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--signal);
+    align-self: flex-start;
+    padding: 2px 8px;
+    border-radius: 4px;
+    background: rgba(79, 70, 229, 0.06);
+  }
+  .card .stock.low {
+    color: var(--amber);
+    background: rgba(217, 119, 6, 0.06);
+  }
+  .card .stock.out {
+    color: var(--danger);
+    background: rgba(220, 38, 38, 0.06);
+  }
+  .card .price {
+    margin-top: auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 16px;
+    border-top: 1px solid rgba(0, 0, 0, 0.03);
+  }
+  .card .price .amt {
+    font-family: var(--mono);
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--paper);
+  }
+  .card .price button {
+    background: var(--signal);
+    color: #FFFFFF;
+    border: none;
+    padding: 8px 16px;
+    border-radius: var(--radius-md);
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+  }
+  .card .price button:hover:not(:disabled) {
+    background: var(--signal-dim);
+    box-shadow: 0 4px 12px rgba(79, 70, 229, 0.2);
+  }
+  .card .price button:disabled {
+    background: var(--ink-700);
+    color: var(--paper-dim);
+    cursor: not-allowed;
+  }
+  .skeleton {
+    opacity: .4;
+    animation: pulse 1.5s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: .3; }
+    50% { opacity: .6; }
+  }
+  .empty-msg, .error-msg {
+    max-width: 1180px;
+    margin: 0 auto;
+    font-family: var(--mono);
+    font-size: 14px;
+    color: var(--paper-dim);
+    padding: 40px 0;
+    text-align: center;
+    background: var(--ink-800);
+    border: 1px dashed rgba(0, 0, 0, 0.08);
+    border-radius: var(--radius-lg);
+  }
+  .error-msg {
+    color: var(--danger);
+    border-color: rgba(220, 38, 38, 0.2);
+    background: rgba(220, 38, 38, 0.01);
+  }
+
+  /* ---------- how it works ---------- */
+  .steps {
+    max-width: 1180px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    background: none;
+    border: none;
+  }
+  .step {
+    background: var(--ink-800);
+    padding: 32px;
+    border-radius: var(--radius-lg);
+    border: 1px solid rgba(0, 0, 0, 0.04);
+    transition: var(--transition);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.01);
+  }
+  .step:hover {
+    border-color: rgba(79, 70, 229, 0.15);
+    transform: translateY(-2px);
+  }
+  .step .n {
+    font-family: var(--mono);
+    color: var(--signal);
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 16px;
+    display: inline-block;
+    padding: 2px 8px;
+    background: rgba(79, 70, 229, 0.06);
+    border-radius: 4px;
+  }
+  .step h4 {
+    font-family: var(--disp);
+    margin: 0 0 12px;
+    font-size: 18px;
+    font-weight: 600;
+  }
+  .step p {
+    margin: 0;
+    font-size: 14px;
+    color: var(--paper-dim);
+    line-height: 1.6;
+  }
+  .step p code {
+    background: var(--ink-850);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: var(--mono);
+    color: var(--signal);
+    font-size: 12px;
+  }
+
+  footer {
+    border-top: 1px solid rgba(0, 0, 0, 0.06);
+    padding: 40px;
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--paper-dim);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 20px;
+    max-width: 1180px;
+    margin: 0 auto;
+  }
+
+  /* ---------- drawer / modals ---------- */
+  .overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.3);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    z-index: 100;
+    display: none;
+    align-items: stretch;
+    justify-content: flex-end;
+    animation: fadeIn 0.25s ease-out;
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  .overlay.open {
+    display: flex;
+  }
+  .overlay.center {
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  .drawer {
+    width: 440px;
+    max-width: 100vw;
+    background: var(--ink-800);
+    border-left: 1px solid rgba(0, 0, 0, 0.06);
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    box-shadow: -10px 0 30px rgba(0,0,0,0.03);
+    animation: slideLeft 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  @keyframes slideLeft {
+    from { transform: translateX(100%); }
+    to { transform: translateX(0); }
+  }
+  .modal {
+    width: 460px;
+    max-width: 100%;
+    background: var(--ink-800);
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    border-radius: var(--radius-lg);
+    padding: 36px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.05);
+    animation: scaleUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  @keyframes scaleUp {
+    from { transform: scale(0.95); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+  }
+  .panel-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 24px 28px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  }
+  .panel-head h3 {
+    font-family: var(--disp);
+    margin: 0;
+    font-size: 20px;
+    font-weight: 600;
+  }
+  .close-x {
+    background: rgba(0, 0, 0, 0.03);
+    border: 1px solid rgba(0, 0, 0, 0.04);
+    color: var(--paper-dim);
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: var(--transition);
+    font-size: 14px;
+  }
+  .close-x:hover {
+    background: rgba(220, 38, 38, 0.08);
+    color: var(--danger);
+    border-color: rgba(220, 38, 38, 0.15);
+  }
+  .drawer-body {
+    padding: 28px;
+    overflow-y: auto;
+    flex: 1;
+  }
+  .cart-line {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 16px 0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+    font-size: 14px;
+  }
+  .cart-line .qty {
+    font-family: var(--mono);
+    color: var(--paper-dim);
+    margin-top: 4px;
+    font-size: 12px;
+  }
+  .cart-line button {
+    background: none;
+    border: none;
+    color: var(--danger);
+    font-size: 12px;
+    cursor: pointer;
+    font-family: var(--mono);
+    padding: 4px 8px;
+    border-radius: 4px;
+    transition: var(--transition);
+  }
+  .cart-line button:hover {
+    background: rgba(220, 38, 38, 0.08);
+  }
+  .drawer-foot {
+    padding: 24px 28px;
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
+    background: var(--ink-850);
+  }
+  .total-row {
+    display: flex;
+    justify-content: space-between;
+    font-family: var(--mono);
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 20px;
+    color: var(--paper);
+  }
+
+  .field {
+    margin-bottom: 20px;
+  }
+  .field label {
+    display: block;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--paper-dim);
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+  }
+  .field input {
+    width: 100%;
+    background: var(--ink-900);
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    color: var(--paper);
+    padding: 12px 14px;
+    border-radius: var(--radius-md);
+    font-family: var(--body);
+    font-size: 14px;
+    transition: var(--transition);
+  }
+  .field input:focus {
+    outline: none;
+    border-color: var(--signal);
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.12);
+  }
+  .form-msg {
+    font-family: var(--mono);
+    font-size: 12px;
+    margin-top: 12px;
+    min-height: 18px;
+  }
+  .form-msg.err { color: var(--danger); }
+  .form-msg.ok { color: var(--signal); }
+  
+  .switch-line {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--paper-dim);
+    margin-top: 20px;
+    text-align: center;
+  }
+  .switch-line a {
+    color: var(--signal);
+    text-decoration: underline;
+    cursor: pointer;
+  }
+
+  .pay-options {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+  .pay-opt {
+    flex: 1;
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    background: var(--ink-900);
+    padding: 16px;
+    border-radius: var(--radius-lg);
+    cursor: pointer;
+    text-align: center;
+    font-family: var(--mono);
+    font-size: 11px;
+    transition: var(--transition);
+    color: var(--paper-dim);
+  }
+  .pay-opt:hover {
+    border-color: rgba(0, 0, 0, 0.12);
+    color: var(--paper);
+  }
+  .pay-opt.selected {
+    border-color: var(--signal);
+    color: var(--signal);
+    background: rgba(79, 70, 229, 0.04);
+    box-shadow: 0 0 12px rgba(79, 70, 229, 0.04);
+  }
+  .pay-opt .name {
+    font-family: var(--disp);
+    font-size: 16px;
+    font-weight: 600;
+    display: block;
+    margin-bottom: 4px;
+    color: var(--paper);
+  }
+  .pay-opt.selected .name {
+    color: var(--signal);
+  }
+
+  .toast-wrap {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    z-index: 200;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-width: 320px;
+  }
+  .toast {
+    background: var(--ink-800);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    border-left: 4px solid var(--signal);
+    padding: 16px 20px;
+    font-family: var(--mono);
+    font-size: 12px;
+    border-radius: var(--radius-md);
+    min-width: 260px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.03);
+    animation: slideIn .25s cubic-bezier(0.16, 1, 0.3, 1);
+    color: var(--paper);
+  }
+  .toast.err {
+    border-left-color: var(--danger);
+  }
+  @keyframes slideIn {
+    from { transform: translateX(30px); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+  }
+
+  .config-note {
+    max-width: 1180px;
+    margin: 20px auto 0;
+    padding: 12px 18px;
+    font-family: var(--mono);
+    font-size: 12px;
+    color: #FFFFFF;
+    background: var(--amber);
+    border-radius: var(--radius-md);
+    font-weight: 500;
+    box-shadow: 0 4px 12px rgba(217, 119, 6, 0.15);
+  }
+
+  /* ---------- details & recommendations ---------- */
+  .detail-sku {
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--paper-dim);
+    margin-bottom: 8px;
+  }
+  .detail-price {
+    font-family: var(--disp);
+    font-size: 32px;
+    font-weight: 700;
+    margin-bottom: 16px;
+    color: var(--signal);
+  }
+  .detail-stock {
+    font-family: var(--mono);
+    font-size: 12px;
+    margin-bottom: 24px;
+    display: inline-block;
+  }
+  .rec-card {
+    background: var(--ink-900);
+    border: 1px solid rgba(0, 0, 0, 0.04);
+    padding: 16px;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: var(--transition);
+  }
+  .rec-card:hover {
+    border-color: var(--signal);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+  }
+  .rec-sku {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--paper-dim);
+    margin-bottom: 6px;
+  }
+  .rec-name {
+    margin: 0 0 10px;
+    font-family: var(--disp);
+    font-size: 15px;
+    font-weight: 600;
+    line-height: 1.3;
+    color: var(--paper);
+  }
+  .rec-price {
+    font-family: var(--mono);
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--paper);
+  }
+
+  /* ---------- orders ---------- */
+  .order-card {
+    background: var(--ink-800);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    padding: 20px;
+    border-radius: var(--radius-lg);
+    margin-bottom: 16px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.01);
+  }
+  .order-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 16px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+    padding-bottom: 12px;
+  }
+  .order-id {
+    font-family: var(--mono);
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--paper);
+  }
+  .order-date {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--paper-dim);
+    margin-top: 4px;
+  }
+  .order-badge {
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+  }
+  .order-items {
+    margin-bottom: 16px;
+  }
+  .order-item {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    margin-top: 8px;
+    color: var(--paper-dim);
+  }
+  .order-item-qty {
+    color: var(--paper);
+  }
+  .order-item-price {
+    font-family: var(--mono);
+  }
+  .order-total-row {
+    display: flex;
+    justify-content: space-between;
+    padding-top: 16px;
+    border-top: 1px solid rgba(0, 0, 0, 0.04);
+    font-family: var(--mono);
+    font-weight: 600;
+    font-size: 15px;
+    color: var(--signal);
+  }
+
+  /* Custom Scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  ::-webkit-scrollbar-track {
+    background: var(--ink-900);
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--ink-600);
+    border-radius: 4px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 0, 0, 0.15);
+  }
+
+  /* ---------- responsive queries ---------- */
+  @media (max-width: 1024px) {
+    .topbar {
+      padding: 16px 24px;
+    }
+    .hero-grid {
+      gap: 40px;
+    }
+    section {
+      padding: 60px 24px;
+    }
+    footer {
+      padding: 30px 24px;
+    }
+  }
+
+  @media (max-width: 860px) {
+    .hero-grid {
+      grid-template-columns: 1fr;
+      text-align: center;
+      gap: 50px;
+    }
+    .eyebrow {
+      justify-content: center;
+    }
+    .eyebrow::before {
+      display: none;
+    }
+    .hero p {
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .hero-cta {
+      justify-content: center;
+    }
+    .steps {
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .topbar {
+      flex-direction: column;
+      gap: 16px;
+      padding: 16px;
+    }
+    .nav-actions {
+      width: 100%;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .user-chip {
+      width: 100%;
+      text-align: center;
+      max-width: none;
+    }
+    .hero {
+      padding: 60px 16px;
+    }
+    .hero h1 {
+      font-size: 38px;
+    }
+    .hero-cta {
+      flex-direction: column;
+      width: 100%;
+      gap: 10px;
+    }
+    .hero-cta button {
+      width: 100%;
+    }
+    .section-head {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 12px;
+    }
+    .cat-tabs {
+      gap: 8px;
+    }
+    .cat-tabs button {
+      padding: 8px 16px;
+      font-size: 11px;
+    }
+    .grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand"><span class="dot"></span>E-commerce</div>
+  <div class="nav-actions">
+    <span class="user-chip" id="userChip">not signed in</span>
+    <!-- Add this Orders button -->
+    <button id="ordersBtn" style="display:none;">ORDERS</button>
+    <button class="cart-btn" id="cartBtn">CART<span class="cart-count" id="cartCount" style="display:none;">0</span></button>
+    <button id="authBtn">SIGN IN</button>
+    <button class="primary" id="logoutBtn" style="display:none;">LOG OUT</button>
+  </div>
+</div>
+
+<div class="hero">
+  <div class="hero-grid">
+    <div>
+      <div class="eyebrow">Order API · Live Catalog</div>
+      <h1>Shop, <em>in order.</em></h1>
+      <p>E-commerce is a premium catalog of gadgets built to prove out one thing: a checkout that just works, from cart to card to confirmation — Stripe or bKash, your call.</p>
+      <div class="hero-cta">
+        <button class="btn-solid" onclick="document.getElementById('catalog').scrollIntoView()">Browse catalog</button>
+        <button class="btn-ghost" id="heroAuthBtn">Create account</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="config-note" id="configNote"></div>
+
+<section id="catalog">
+  <div class="section-head">
+    <h2>Catalog</h2>
+    <span class="idx" id="catalogIdx">/api/products/</span>
+  </div>
+  <div class="cat-tabs" id="catTabs"></div>
+  <div class="grid" id="productGrid"></div>
+</section>
+
+<section>
+  <div class="section-head">
+    <h2>How checkout works</h2>
+    <span class="idx">3 steps</span>
+  </div>
+  <div class="steps">
+    <div class="step"><div class="n">01</div><h4>Build the order</h4><p>Add items to cart, sign in, and we create the order server-side against live stock via <code>/api/orders/</code>.</p></div>
+    <div class="step"><div class="n">02</div><h4>Choose a rail</h4><p>Pick Stripe for card capture in-page, or bKash to authorize on their hosted checkout page.</p></div>
+    <div class="step"><div class="n">03</div><h4>Confirm & ship</h4><p>Webhooks or an explicit execute call sync payment status back to your order the moment it settles.</p></div>
+  </div>
+</section>
+
+<footer>
+  <span>E-commerce — a reference storefront for the Ordering &amp; Payment API</span>
+  <span id="apiBaseLabel"></span>
+</footer>
+
+<!-- Cart drawer -->
+<div class="overlay" id="cartOverlay">
+  <div class="drawer">
+    <div class="panel-head"><h3>Your cart</h3><button class="close-x" data-close="cartOverlay">✕</button></div>
+    <div class="drawer-body" id="cartBody"></div>
+    <div class="drawer-foot">
+      <div class="total-row"><span>Total</span><span id="cartTotal">$0.00</span></div>
+      <button class="btn-solid" style="width:100%;" id="checkoutBtn">Checkout</button>
+      <div class="form-msg" id="cartMsg"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Auth modal -->
+<div class="overlay center" id="authOverlay">
+  <div class="modal">
+    <div class="panel-head" style="padding:0 0 18px; border:none;">
+      <h3 id="authTitle">Sign in</h3>
+      <button class="close-x" data-close="authOverlay">✕</button>
+    </div>
+    <div id="loginForm">
+      <div class="field"><label>Email</label><input type="email" id="loginEmail" placeholder="shopper@example.com"></div>
+      <div class="field"><label>Password</label><input type="password" id="loginPassword" placeholder="••••••••"></div>
+      <button class="btn-solid" style="width:100%;" id="loginSubmit">Sign in</button>
+      <div class="form-msg" id="loginMsg"></div>
+      <div class="switch-line">No account? <a id="toRegister">Create one</a></div>
+    </div>
+    <div id="registerForm" style="display:none;">
+      <div class="field"><label>Username</label><input type="text" id="regUsername" placeholder="shopper"></div>
+      <div class="field"><label>Email</label><input type="email" id="regEmail" placeholder="shopper@example.com"></div>
+      <div class="field"><label>Password</label><input type="password" id="regPassword" placeholder="••••••••"></div>
+      <button class="btn-solid" style="width:100%;" id="regSubmit">Create account</button>
+      <div class="form-msg" id="regMsg"></div>
+      <div class="switch-line">Have an account? <a id="toLogin">Sign in</a></div>
+    </div>
+  </div>
+</div>
+
+<!-- Checkout modal -->
+<div class="overlay center" id="payOverlay">
+  <div class="modal">
+    <div class="panel-head" style="padding:0 0 18px; border:none;">
+      <h3>Pay for order <span id="payOrderId"></span></h3>
+      <button class="close-x" data-close="payOverlay">✕</button>
+    </div>
+    <div class="pay-options">
+      <div class="pay-opt selected" data-provider="stripe"><span class="name">Stripe</span>Card, in-page</div>
+      <div class="pay-opt" data-provider="bkash"><span class="name">bKash</span>Redirect &amp; authorize</div>
+    </div>
+    <div id="stripeFields">
+      <div class="field"><label>Card number</label><input type="text" id="cardNumber" placeholder="4242 4242 4242 4242"></div>
+      <div style="display:flex; gap:10px;">
+        <div class="field" style="flex:1;"><label>Expiry</label><input type="text" id="cardExp" placeholder="MM/YY"></div>
+        <div class="field" style="flex:1;"><label>CVC</label><input type="text" id="cardCvc" placeholder="123"></div>
+      </div>
+    </div>
+    <button class="btn-solid" style="width:100%;" id="paySubmit">Pay now</button>
+    <div class="form-msg" id="payMsg"></div>
+  </div>
+</div>
+
+<!-- Product Detail & Recommendations Drawer -->
+<div class="overlay" id="productOverlay">
+  <div class="drawer" style="width:460px;">
+    <div class="panel-head">
+      <h3 id="detailName">Product Name</h3>
+      <button class="close-x" data-close="productOverlay">✕</button>
+    </div>
+    <div class="drawer-body">
+      <!-- Main Product Info -->
+      <div id="detailInfo" style="margin-bottom: 30px;">
+        <!-- Populated by JS -->
+      </div>
+      
+      <!-- Recommendations Section -->
+      <div>
+        <h4 style="font-family:var(--disp); font-size:16px; margin:0 0 16px; border-bottom:1px solid var(--ink-700); padding-bottom:8px;">Recommended for you</h4>
+        <div id="recommendationGrid" style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Orders Drawer -->
+<div class="overlay" id="ordersOverlay">
+  <div class="drawer" style="width:440px;">
+    <div class="panel-head">
+      <h3>Your Orders</h3>
+      <button class="close-x" data-close="ordersOverlay">✕</button>
+    </div>
+    <div class="drawer-body" id="ordersBody" style="background: var(--ink-900);">
+      <!-- Order cards will be injected here by JavaScript -->
+    </div>
+  </div>
+</div>
+
+<div class="toast-wrap" id="toastWrap"></div>
+
+
+<script>
+/* ============================================================
+   SIGNAL — frontend for the Ordering & Payment API
+   Reads API_BASE from window.API_BASE (defaults to same-origin
+   relative paths, per the integration guide). Edit the constant
+   below to point at your backend, e.g. 'https://192.168.0.101:8000'
+   ============================================================ */
+const API_BASE = 'https://enable-chastise-backpedal.ngrok-free.dev';//'http://192.168.0.101:8000'; // '' = same-origin. Set to your backend origin if hosted separately.
+
+const state = {
+  access: localStorage.getItem('signal_access') || null,
+  refresh: localStorage.getItem('signal_refresh') || null,
+  userEmail: localStorage.getItem('signal_email') || null,
+  products: [],
+  categories: [],
+  activeCategory: 'all',
+  cart: {}, // product_id -> {product, qty}
+  currentOrder: null,
+  selectedProvider: 'stripe'
+};
+
+// ---------- helpers ----------
+function $(id){ return document.getElementById(id); }
+function toast(msg, isErr){
+  const wrap = $('toastWrap');
+  const el = document.createElement('div');
+  el.className = 'toast' + (isErr ? ' err' : '');
+  el.textContent = msg;
+  wrap.appendChild(el);
+  setTimeout(()=> el.remove(), 4200);
+}
+function fmt(n){ return '$' + Number(n).toFixed(2); }
+
+async function api(path, opts = {}, isRetry = false) {
+  //const headers = Object.assign({'Content-Type':'application/json'}, opts.headers || {});
+  const headers = Object.assign({
+    'ngrok-skip-browser-warning': 'true'
+}, opts.headers || {});
+
+// Only add Content-Type when sending a request body
+if (opts.body) {
+    headers['Content-Type'] = 'application/json';
+}
+  
+  // Attach the current access token if it exists and auth isn't explicitly bypassed
+  if (state.access && !opts.noAuth) {
+    headers['Authorization'] = 'Bearer ' + state.access;
+  }
+  
+  let res = await fetch(API_BASE + path, Object.assign({}, opts, { headers }));
+  
+  // --- TOKEN REFRESH INTERCEPTOR ---
+  // If the server returns 401 (Unauthorized), we haven't already retried, and we have a refresh token
+  if (res.status === 401 && !opts.noAuth && !isRetry && state.refresh) {
+    try {
+      // 1. Ask the backend for a new access token
+      // Note: Adjust '/api/auth/token/refresh/' if your Django endpoint is named differently (e.g., '/api/token/refresh/')
+      // const refreshRes = await fetch(API_BASE + '/api/auth/token/refresh/', {
+      //   method: 'POST',
+      //   headers: { 'Content-Type': 'application/json' },
+      //   body: JSON.stringify({ refresh: state.refresh })
+      // });
+    const refreshRes = await fetch(API_BASE + '/api/auth/token/refresh/', {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json',
+        'ngrok-skip-browser-warning': 'true'
+    },
+    body: JSON.stringify({ refresh: state.refresh })
+});
+      
+      if (!refreshRes.ok) throw new Error('Refresh token invalid or expired');
+      
+      const refreshData = await refreshRes.json();
+      
+      // 2. Save the new access token. If the backend also rotated the refresh token, save that too.
+      setSession(refreshData.access, refreshData.refresh || state.refresh, state.userEmail);
+      
+      // 3. Retry the original API call with the new token
+      return await api(path, opts, true);
+      
+    } catch (refreshErr) {
+      // If the refresh token is also dead, clear the session and force the user to log in again
+      clearSession();
+      toast('Session expired. Please sign in again.', true);
+      showAuth('login');
+      throw new Error('Session expired');
+    }
+  }
+
+  // Parse normal response data
+  let data = null;
+  try { data = await res.json(); } catch(e) { /* empty body */ }
+  
+  if (!res.ok) {
+    const msg = (data && (data.detail || data.error || JSON.stringify(data))) || ('Request failed (' + res.status + ')');
+    throw new Error(msg);
+  }
+  
+  return data;
+}
+
+function setSession(access, refresh, email){
+  state.access = access; state.refresh = refresh; state.userEmail = email;
+  localStorage.setItem('signal_access', access || '');
+  localStorage.setItem('signal_refresh', refresh || '');
+  localStorage.setItem('signal_email', email || '');
+  renderAuthState();
+}
+function clearSession(){
+  state.access = null; state.refresh = null; state.userEmail = null;
+  localStorage.removeItem('signal_access'); localStorage.removeItem('signal_refresh'); localStorage.removeItem('signal_email');
+  renderAuthState();
+}
+function renderAuthState(){
+  const chip = $('userChip'), authBtn = $('authBtn'), logoutBtn = $('logoutBtn');
+  const ordersBtn = $('ordersBtn'); // Grab the new button
+  const heroAuthBtn = $('heroAuthBtn');
+  
+  if(state.access){
+    chip.textContent = state.userEmail || 'signed in';
+    authBtn.style.display = 'none';
+    logoutBtn.style.display = 'inline-block';
+    if(ordersBtn) ordersBtn.style.display = 'inline-block'; // Show if logged in
+    if(heroAuthBtn) heroAuthBtn.style.display = 'none'; // Hide Create account when logged in
+  } else {
+    chip.textContent = 'not signed in';
+    authBtn.style.display = 'inline-block';
+    logoutBtn.style.display = 'none';
+    if(ordersBtn) ordersBtn.style.display = 'none'; // Hide if logged out
+    if(heroAuthBtn) heroAuthBtn.style.display = 'inline-block'; // Show Create account when logged out
+  }
+}
+
+function openOverlay(id){ $(id).classList.add('open'); }
+function closeOverlay(id){ $(id).classList.remove('open'); }
+document.querySelectorAll('[data-close]').forEach(btn=>{
+  btn.addEventListener('click', ()=> closeOverlay(btn.dataset.close));
+});
+document.querySelectorAll('.overlay').forEach(ov=>{
+  ov.addEventListener('click', (e)=>{ if(e.target === ov) closeOverlay(ov.id); });
+});
+
+
+
+//order
+
+// --- Orders Logic ---
+
+$('ordersBtn').addEventListener('click', async () => {
+  const body = $('ordersBody');
+  body.innerHTML = '<div class="empty-msg">Loading orders...</div>';
+  openOverlay('ordersOverlay');
+
+  try {
+    const orders = await api('/api/orders/');
+    renderOrders(orders);
+  } catch(err) {
+    body.innerHTML = `<div class="error-msg" style="padding: 20px;">Failed to load orders: ${err.message}</div>`;
+  }
+});
+
+function renderOrders(orders) {
+  const body = $('ordersBody');
+  
+  // Handle empty state or paginated results
+  const orderList = Array.isArray(orders) ? orders : (orders.results || []);
+  
+  if (orderList.length === 0) {
+    body.innerHTML = '<div class="empty-msg" style="padding: 20px;">You have no past orders.</div>';
+    return;
+  }
+
+  body.innerHTML = orderList.map(o => {
+    // Determine status badge colors
+    const statusColors = {
+      'paid': 'color: var(--ink-900); background: var(--signal);',
+      'pending': 'color: var(--ink-900); background: var(--amber);',
+      'canceled': 'color: white; background: var(--danger);'
+    };
+    const badgeStyle = statusColors[o.status] || 'color: var(--paper-dim); border: 1px solid var(--ink-600);';
+
+    // Map through individual items in the order
+    const itemsHtml = o.items.map(i => `
+      <div class="order-item">
+        <span><span class="order-item-qty">${i.quantity}</span> × ${i.product.name}</span>
+        <span class="order-item-price">${fmt(i.price)}</span>
+      </div>
+    `).join('');
+
+    // Format the date if available
+    const orderDate = o.created_at ? new Date(o.created_at).toLocaleDateString() : '';
+
+    return `
+      <div class="order-card">
+        <div class="order-header">
+          <div>
+            <div class="order-id">Order #${o.id}</div>
+            <div class="order-date">${orderDate}</div>
+          </div>
+          <span class="order-badge" style="${badgeStyle}">
+            ${o.status}
+          </span>
+        </div>
+        
+        <div class="order-items">
+          ${itemsHtml}
+        </div>
+        
+        <div class="order-total-row">
+          <span>Total</span>
+          <span>${fmt(o.total_amount)}</span>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+// ---------- catalog ----------
+const FALLBACK_PRODUCTS = [
+  {id:1, sku:'PROD100', name:'Wireless Headphones', slug:'wireless-headphones', price:'99.99', stock:15, status:'active', category:1},
+  {id:2, sku:'PROD101', name:'Bluetooth Speaker', slug:'bluetooth-speaker', price:'59.50', stock:8, status:'active', category:1},
+  {id:3, sku:'PROD102', name:'USB-C Fast Charger', slug:'usb-c-fast-charger', price:'24.00', stock:0, status:'active', category:1},
+  {id:4, sku:'PROD103', name:'Mechanical Keyboard', slug:'mechanical-keyboard', price:'129.00', stock:5, status:'active', category:1}
+];
+const FALLBACK_CATEGORIES = [{id:1, name:'Gadgets', slug:'gadgets'}];
+
+async function loadCatalog(){
+  const grid = $('productGrid');
+  grid.innerHTML = Array.from({length:4}).map(()=>`<div class="card skeleton"><div class="sku">SKU—</div><h3>Loading…</h3></div>`).join('');
+  try{
+    const [cats, prods] = await Promise.all([
+      api('/api/categories/', {noAuth:true}),
+      api('/api/products/', {noAuth:true})
+    ]);
+    state.categories = Array.isArray(cats) ? cats : (cats.results || []);
+    state.products = Array.isArray(prods) ? prods : (prods.results || []);
+    $('configNote').style.display = 'none';
+  } catch(err){
+    state.categories = FALLBACK_CATEGORIES;
+    state.products = FALLBACK_PRODUCTS;
+    $('configNote').style.display = 'block';
+    $('configNote').textContent = 'Live API not reachable from this preview (' + err.message+'//' + err+') — showing sample catalog data from the docs. Set API_BASE in the script to your backend origin to go live.';
+  }
+  renderCategoryTabs();
+  renderProducts();
+}
+
+function renderCategoryTabs(){
+  const tabs = $('catTabs');
+  const all = [{id:'all', name:'All'}].concat(state.categories);
+  tabs.innerHTML = '';
+  all.forEach(c=>{
+    const b = document.createElement('button');
+    b.textContent = c.name;
+    if(state.activeCategory === c.id) b.classList.add('active');
+    
+    // Updated click listener to fetch products from the API
+    b.addEventListener('click', async ()=>{ 
+      state.activeCategory = c.id; 
+      renderCategoryTabs(); 
+      await fetchProductsByCategory(c.id); 
+    });
+    
+    tabs.appendChild(b);
+  });
+}
+
+async function fetchProductsByCategory(categoryId) {
+  const grid = $('productGrid');
+  
+  // Show loading skeleton while fetching
+  grid.innerHTML = Array.from({length:4}).map(()=>`<div class="card skeleton"><div class="sku">SKU—</div><h3>Loading…</h3></div>`).join('');
+  
+  try {
+    // Determine the correct endpoint
+    const endpoint = categoryId === 'all' 
+      ? '/api/products/' 
+      : `/api/products/${categoryId}/category/`;
+      
+    // Call the API
+    const prods = await api(endpoint, {noAuth:true});
+    state.products = Array.isArray(prods) ? prods : (prods.results || []);
+    
+  } catch(err) {
+    console.error("Failed to fetch products for category:", err);
+    state.products = [];
+  }
+  
+  // Render the newly fetched products
+  renderProducts();
+}
+
+function renderProducts(){
+  const grid = $('productGrid');
+  const list = state.products; 
+  
+  // Dynamically show the count of products available
+  const count = list.length;
+  $('catalogIdx').textContent = `${count} product${count !== 1 ? 's' : ''} available`;
+  
+  if(list.length === 0){
+    grid.innerHTML = '';
+    grid.insertAdjacentHTML('afterend', '<div class="empty-msg">No products in this category yet.</div>');
+    return;
+  }
+  
+  grid.innerHTML = list.map(p=>{
+    const stock = Number(p.stock);
+    const stockClass = stock === 0 ? 'out' : (stock <= 5 ? 'low' : '');
+    const stockLabel = stock === 0 ? 'Sold out' : (stock <= 5 ? `Only ${stock} left!` : `${stock} in stock`);
+    
+    // Added 'cursor: pointer' and 'data-view' to make the card clickable
+    return `<div class="card" style="cursor: pointer;" data-view="${p.id}">
+      <div class="sku">${p.sku}</div>
+      <h3>${p.name}</h3>
+      <div class="stock ${stockClass}">${stockLabel}</div>
+      <div class="price">
+        <span class="amt">${fmt(p.price)}</span>
+        <button data-add="${p.id}" ${stock===0?'disabled':''}>${stock===0?'Sold out':'Add'}</button>
+      </div>
+    </div>`;
+  }).join('');
+  
+  // Listener for adding to cart
+  grid.querySelectorAll('[data-add]').forEach(btn=>{
+    btn.addEventListener('click', (e)=> {
+      e.stopPropagation(); // PREVENTS the card click event from firing
+      addToCart(Number(btn.dataset.add));
+    });
+  });
+
+  // New listener for opening the product details
+  grid.querySelectorAll('[data-view]').forEach(card=>{
+    card.addEventListener('click', ()=> openProductView(Number(card.dataset.view)));
+  });
+}
+
+
+async function openProductView(productId) {
+  // Try to find the product in current state, or gracefully handle if missing
+  const product = state.products.find(p => p.id === productId) || state.currentViewProduct;
+  if (!product) return;
+  
+  // Temporarily store the viewed product in state in case we clicked a recommendation
+  state.currentViewProduct = product;
+
+  // 1. Populate the main product info
+  $('detailName').textContent = product.name;
+  
+  const stock = Number(product.stock);
+  const stockClass = stock === 0 ? 'out' : (stock <= 5 ? 'low' : '');
+  const stockLabel = stock === 0 ? 'Sold out' : (stock <= 5 ? `Only ${stock} left!` : `${stock} in stock`);
+
+  $('detailInfo').innerHTML = `
+    <div class="detail-sku">${product.sku}</div>
+    <div class="detail-price">${fmt(product.price)}</div>
+    <div class="stock ${stockClass} detail-stock">${stockLabel}</div>
+    <button class="btn-solid" style="width:100%;" onclick="addToCart(${product.id})" ${stock===0?'disabled':''}>
+      ${stock===0?'Sold out':'Add to Cart'}
+    </button>
+  `;
+
+  // 2. Open the overlay and show loading text for recommendations
+  $('recommendationGrid').innerHTML = '<div class="empty-msg" style="grid-column: span 2;">Loading recommendations...</div>';
+  openOverlay('productOverlay');
+
+  // 3. Fetch Recommendations using your specific endpoint
+  try {
+    // This assumes your API_BASE handles the base URL (http://192.168.0.101:8000)
+    const endpoint = `/api/products/${productId}/recommendations/`;
+    const recs = await api(endpoint, { noAuth: true });
+    
+    // Support APIs that return raw arrays or paginated { results: [...] } objects
+    const recList = Array.isArray(recs) ? recs : (recs.results || []);
+    renderRecommendations(recList);
+  } catch(err) {
+    console.error("Recommendation error:", err);
+    $('recommendationGrid').innerHTML = `<div class="error-msg" style="grid-column: span 2;">Could not load recommendations.</div>`;
+  }
+}
+
+function renderRecommendations(recList) {
+  const grid = $('recommendationGrid');
+  
+  if (recList.length === 0) {
+    grid.innerHTML = '<div class="empty-msg" style="grid-column: span 2;">No recommendations found.</div>';
+    return;
+  }
+
+  // Render mini-cards for recommended items
+  grid.innerHTML = recList.map(p => {
+    return `
+    <div class="rec-card" 
+         onclick="
+            state.currentViewProduct = {id: ${p.id}, name: '${p.name.replace(/'/g, "\\'")}', sku: '${p.sku}', price: '${p.price}', stock: '${p.stock}'};
+            openProductView(${p.id});
+         ">
+      <div class="rec-sku">${p.sku}</div>
+      <h5 class="rec-name">${p.name}</h5>
+      <div class="rec-price">${fmt(p.price)}</div>
+    </div>`;
+  }).join('');
+}
+
+// ---------- cart ----------
+function addToCart(productId){
+  const product = state.products.find(p=> p.id === productId);
+  if(!product) return;
+  const existing = state.cart[productId];
+  const currentQty = existing ? existing.qty : 0;
+  if(currentQty + 1 > Number(product.stock)){
+    toast('Only ' + product.stock + ' in stock', true);
+    return;
+  }
+  state.cart[productId] = { product, qty: currentQty + 1 };
+  renderCart();
+  toast(product.name + ' added to cart');
+}
+function removeFromCart(productId){
+  delete state.cart[productId];
+  renderCart();
+}
+function cartTotal(){
+  return Object.values(state.cart).reduce((sum, l)=> sum + Number(l.product.price) * l.qty, 0);
+}
+function cartCount(){
+  return Object.values(state.cart).reduce((sum, l)=> sum + l.qty, 0);
+}
+function renderCart(){
+  const count = cartCount();
+  const badge = $('cartCount');
+  badge.style.display = count > 0 ? 'flex' : 'none';
+  badge.textContent = count;
+
+  const body = $('cartBody');
+  const lines = Object.values(state.cart);
+  if(lines.length === 0){
+    body.innerHTML = '<div class="empty-msg">Your cart is empty. Add something from the catalog.</div>';
+  } else {
+    body.innerHTML = lines.map(l=>`
+      <div class="cart-line">
+        <div>
+          <div>${l.product.name}</div>
+          <div class="qty">${l.qty} × ${fmt(l.product.price)}</div>
+        </div>
+        <div style="text-align:right;">
+          <div>${fmt(l.qty * l.product.price)}</div>
+          <button data-remove="${l.product.id}">remove</button>
+        </div>
+      </div>`).join('');
+    body.querySelectorAll('[data-remove]').forEach(btn=>{
+      btn.addEventListener('click', ()=> removeFromCart(Number(btn.dataset.remove)));
+    });
+  }
+  $('cartTotal').textContent = fmt(cartTotal());
+}
+
+$('cartBtn').addEventListener('click', ()=> openOverlay('cartOverlay'));
+
+// ---------- auth ----------
+function showAuth(mode){
+  $('loginForm').style.display = mode === 'login' ? 'block' : 'none';
+  $('registerForm').style.display = mode === 'register' ? 'block' : 'none';
+  $('authTitle').textContent = mode === 'login' ? 'Sign in' : 'Create account';
+  $('loginMsg').textContent = ''; $('regMsg').textContent = '';
+  openOverlay('authOverlay');
+}
+$('authBtn').addEventListener('click', ()=> showAuth('login'));
+$('heroAuthBtn').addEventListener('click', ()=> showAuth('register'));
+$('toRegister').addEventListener('click', ()=> showAuth('register'));
+$('toLogin').addEventListener('click', ()=> showAuth('login'));
+
+$('loginSubmit').addEventListener('click', async ()=>{
+  const email = $('loginEmail').value.trim();
+  const password = $('loginPassword').value;
+  const msg = $('loginMsg'); msg.className = 'form-msg';
+  if(!email || !password){ msg.textContent = 'Enter email and password.'; msg.className = 'form-msg err'; return; }
+  msg.textContent = 'Signing in…';
+  try{
+    const data = await api('/api/auth/login/', { method:'POST', noAuth:true, body: JSON.stringify({email, password}) });
+    setSession(data.access, data.refresh, email);
+    msg.textContent = 'Signed in.'; msg.className = 'form-msg ok';
+    setTimeout(()=> closeOverlay('authOverlay'), 400);
+    toast('Welcome back');
+  }catch(err){
+    msg.textContent = err.message; msg.className = 'form-msg err';
+  }
+});
+
+$('regSubmit').addEventListener('click', async ()=>{
+  const username = $('regUsername').value.trim();
+  const email = $('regEmail').value.trim();
+  const password = $('regPassword').value;
+  const msg = $('regMsg'); msg.className = 'form-msg';
+  if(!username || !email || !password){ msg.textContent = 'Fill in all fields.'; msg.className = 'form-msg err'; return; }
+  msg.textContent = 'Creating account…';
+  try{
+    await api('/api/auth/register/', { method:'POST', noAuth:true, body: JSON.stringify({email, username, password}) });
+    msg.textContent = 'Account created — signing you in…'; msg.className = 'form-msg ok';
+    const data = await api('/api/auth/login/', { method:'POST', noAuth:true, body: JSON.stringify({email, password}) });
+    setSession(data.access, data.refresh, email);
+    setTimeout(()=> closeOverlay('authOverlay'), 500);
+    toast('Account created');
+  }catch(err){
+    msg.textContent = err.message; msg.className = 'form-msg err';
+  }
+});
+
+$('logoutBtn').addEventListener('click', ()=>{
+  clearSession();
+  toast('Signed out');
+});
+
+// ---------- checkout ----------
+$('checkoutBtn').addEventListener('click', async ()=>{
+  const cmsg = $('cartMsg'); cmsg.className = 'form-msg'; cmsg.textContent = '';
+  if(cartCount() === 0){ cmsg.textContent = 'Cart is empty.'; cmsg.className = 'form-msg err'; return; }
+  if(!state.access){
+    cmsg.textContent = 'Sign in to check out.'; cmsg.className = 'form-msg err';
+    closeOverlay('cartOverlay'); showAuth('login');
+    return;
+  }
+  cmsg.textContent = 'Creating order…';
+  try{
+    const items = Object.values(state.cart).map(l => ({ product_id: l.product.id, quantity: l.qty }));
+    const order = await api('/api/orders/', { method:'POST', body: JSON.stringify({ items }) });
+    state.currentOrder = order;
+    cmsg.textContent = '';
+    closeOverlay('cartOverlay');
+    $('payOrderId').textContent = '#' + order.id;
+    openOverlay('payOverlay');
+  }catch(err){
+    cmsg.textContent = err.message; cmsg.className = 'form-msg err';
+  }
+});
+
+document.querySelectorAll('.pay-opt').forEach(opt=>{
+  opt.addEventListener('click', ()=>{
+    document.querySelectorAll('.pay-opt').forEach(o=> o.classList.remove('selected'));
+    opt.classList.add('selected');
+    state.selectedProvider = opt.dataset.provider;
+    $('stripeFields').style.display = state.selectedProvider === 'stripe' ? 'block' : 'none';
+    $('paySubmit').textContent = state.selectedProvider === 'stripe' ? 'Pay now' : 'Continue to bKash';
+  });
+});
+
+$('paySubmit').addEventListener('click', async ()=>{
+  const pmsg = $('payMsg'); pmsg.className = 'form-msg'; pmsg.textContent = '';
+  if(!state.currentOrder){ pmsg.textContent = 'No active order.'; pmsg.className = 'form-msg err'; return; }
+  pmsg.textContent = 'Initiating payment…';
+  try{
+    const init = await api('/api/payments/initiate/', {
+      method:'POST',
+      body: JSON.stringify({ order_id: state.currentOrder.id, provider: state.selectedProvider })
+    });
+
+    if(state.selectedProvider === 'bkash'){
+      if(init.payment_url){
+        pmsg.textContent = 'Redirecting to bKash…'; pmsg.className = 'form-msg ok';
+        window.location.href = init.payment_url;
+      } else {
+        pmsg.textContent = 'bKash did not return a payment URL.'; pmsg.className = 'form-msg err';
+      }
+      return;
+    }
+
+    // Stripe flow: this demo skips real Stripe.js and calls the execute
+    // endpoint directly, mirroring the "instant execution check" the
+    // guide describes as an alternative to waiting on the webhook.
+    pmsg.textContent = 'Confirming card payment…';
+    const exec = await api('/api/payments/execute/', {
+      method:'POST',
+      body: JSON.stringify({ payment_id: init.payment_id })
+    });
+    if(exec.status === 'success'){
+      pmsg.textContent = 'Payment succeeded. Order paid.'; pmsg.className = 'form-msg ok';
+      state.cart = {}; renderCart();
+      setTimeout(()=> closeOverlay('payOverlay'), 900);
+      toast('Order #' + state.currentOrder.id + ' paid via Stripe');
+    } else {
+      pmsg.textContent = 'Payment status: ' + exec.status; pmsg.className = 'form-msg err';
+    }
+  }catch(err){
+    pmsg.textContent = err.message; pmsg.className = 'form-msg err';
+  }
+});
+
+// ---------- boot ----------
+$('apiBaseLabel').textContent = 'API base: ' + (API_BASE || window.location.origin);
+renderAuthState();
+renderCart();
+loadCatalog();
+</script>
+</body>
+</html>
