@@ -283,9 +283,15 @@ The UI is configured to connect to your backend API server (e.g., running on `ht
 ### Product Catalog
 - `GET /api/categories/` - List all category hierarchies.
 - `GET /api/categories/{id}/` - Retrieve category tree.
+- `POST /api/categories/` - Create a new category **(Admin Only)**.
+- `PUT/PATCH /api/categories/{id}/` - Update category details **(Admin Only)**.
+- `DELETE /api/categories/{id}/` - Delete a category **(Admin Only)**.
 - `GET /api/products/` - List products (filterable by category hierarchy, searching by name/sku).
 - `GET /api/products/{id}/` - Retrieve product details.
 - `GET /api/products/{id}/recommendations/` - Fetch related products recommended via DFS tree traversal.
+- `POST /api/products/` - Create a new product **(Admin Only)**.
+- `PUT/PATCH /api/products/{id}/` - Update product details **(Admin Only)**.
+- `DELETE /api/products/{id}/` - Delete a product **(Admin Only)**.
 
 ### Order Management
 - `POST /api/orders/` - Create a new order (accepts list of items with quantity).
