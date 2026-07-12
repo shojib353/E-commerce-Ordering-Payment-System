@@ -299,8 +299,8 @@ The UI is configured to connect to your backend API server (e.g., running on `ht
 - `POST /api/payments/webhook/bkash/` - bKash Webhook callback simulator.
 
 ### API Interactive Docs
-- Swagger UI: `http://localhost:8000/api/docs/`
-- ReDoc: `http://localhost:8000/api/redoc/`
+- Swagger UI: `https://enable-chastise-backpedal.ngrok-free.dev/api/docs/`
+- ReDoc: `https://enable-chastise-backpedal.ngrok-free.dev/api/redoc/`
 
 ---
 
