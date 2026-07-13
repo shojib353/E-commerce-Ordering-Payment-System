@@ -1,4 +1,7 @@
 # E-commerce Ordering & Payment System
+👉 **[https://e-commerce-ordering-payment-system.vercel.app/](https://e-commerce-ordering-payment-system.vercel.app/)**
+Swagger UI: `https://enable-chastise-backpedal.ngrok-free.dev/api/docs/`
+
 
 A full-stack, enterprise-grade E-commerce Ordering and Payment System. This project features a robust Django REST Framework (DRF) backend implementing advanced OOP design patterns, and a highly responsive, modern Single Page Application (SPA) frontend.
 
