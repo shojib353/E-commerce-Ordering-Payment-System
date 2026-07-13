@@ -47,6 +47,13 @@ class BasePaymentStrategy(ABC):
         """
         pass
 
+    @abstractmethod
+    def refund_payment(self, payment, **kwargs) -> dict:
+        """
+        Refund an executed payment transaction.
+        """
+        pass
+
 
 class StripePaymentStrategy(BasePaymentStrategy):
     def __init__(self):
@@ -151,6 +158,21 @@ class StripePaymentStrategy(BasePaymentStrategy):
                 'status': 'failed',
                 'raw_response': {'error': str(e)}
             }
+
+    def refund_payment(self, payment, **kwargs) -> dict:
+        if self.is_placeholder_key() or payment.transaction_id.startswith('mock_pi_'):
+            logger.info(f"[Stripe Mock] Refunding transaction {payment.transaction_id}")
+            return {'status': 'refunded', 'raw_response': {'mock': True, 'id': payment.transaction_id}}
+
+        try:
+            refund = stripe.Refund.create(payment_intent=payment.transaction_id)
+            return {
+                'status': 'refunded',
+                'raw_response': refund.to_dict()
+            }
+        except Exception as e:
+            logger.error(f"Stripe refund failed: {e}")
+            raise ValueError(f"Stripe refund error: {str(e)}")
 
 
 class BkashPaymentStrategy(BasePaymentStrategy):
@@ -314,6 +336,44 @@ class BkashPaymentStrategy(BasePaymentStrategy):
                 'raw_response': {'error': str(e)}
             }
 
+    def refund_payment(self, payment, **kwargs) -> dict:
+        if self.is_placeholder_key() or payment.transaction_id.startswith('mock_bkash_'):
+            logger.info(f"[bKash Mock] Refunding payment for Order #{payment.order.id}")
+            return {'status': 'refunded', 'raw_response': {'mock': True, 'paymentID': payment.transaction_id}}
+
+        try:
+            token = self._get_token()
+            url = f"{settings.BKASH_BASE_URL}/checkout/payment/refund"
+            headers = {
+                "Content-Type": "application/json",
+                "Authorization": token,
+                "X-APP-Key": settings.BKASH_APP_KEY
+            }
+            
+            # Retrieve trxID from raw_response if available
+            trx_id = None
+            if payment.raw_response:
+                trx_id = payment.raw_response.get('trxID')
+                
+            body = {
+                "paymentID": payment.transaction_id,
+                "amount": str(payment.order.total_amount),
+                "trxID": trx_id or "",
+                "sku": f"REFUND-ORDER-{payment.order.id}",
+                "reason": "Stock not available during checkout processing"
+            }
+            
+            response = requests.post(url, json=body, headers=headers, timeout=10)
+            response.raise_for_status()
+            data = response.json()
+            return {
+                'status': 'refunded',
+                'raw_response': data
+            }
+        except Exception as e:
+            logger.error(f"bKash refund failed: {e}")
+            raise ValueError(f"bKash refund error: {str(e)}")
+
 
 class PaymentContext:
     """
@@ -336,3 +396,6 @@ class PaymentContext:
 
     def query(self, transaction_id) -> dict:
         return self.strategy.query_payment(transaction_id)
+
+    def refund(self, payment, **kwargs) -> dict:
+        return self.strategy.refund_payment(payment, **kwargs)

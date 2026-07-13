@@ -1,6 +1,7 @@
 import json
 import logging
 import stripe
+from django.core.exceptions import ValidationError
 from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
@@ -64,8 +65,17 @@ class PaymentInitiateView(generics.GenericAPIView):
 
         # If payment is already success (e.g. mock instant success)
         if payment.status == 'success':
-            process_payment_success(payment.id)
-            response_data['status'] = 'success'
+            try:
+                process_payment_success(payment.id)
+                response_data['status'] = 'success'
+            except ValidationError as e:
+                logger.warning(f"Stock check failed during instant success payment initiation for Payment #{payment.id}. Refunding. Error: {e}")
+                try:
+                    context.refund(payment)
+                except Exception as refund_err:
+                    logger.error(f"Failed to auto-refund Payment #{payment.id}: {refund_err}")
+                process_payment_failure(payment.id)
+                response_data['status'] = 'failed'
 
         return Response(response_data, status=status.HTTP_201_CREATED)
 
@@ -102,7 +112,15 @@ class PaymentExecuteView(generics.GenericAPIView):
             
             status_val = exec_data['status']
             if status_val == 'success':
-                process_payment_success(payment.id)
+                try:
+                    process_payment_success(payment.id)
+                except ValidationError as e:
+                    logger.warning(f"Stock check failed during payment execution for Payment #{payment.id}. Refunding. Error: {e}")
+                    try:
+                        context.refund(payment)
+                    except Exception as refund_err:
+                        logger.error(f"Failed to auto-refund Payment #{payment.id}: {refund_err}")
+                    process_payment_failure(payment.id)
             elif status_val == 'failed':
                 process_payment_failure(payment.id)
             else:
@@ -163,7 +181,16 @@ class StripeWebhookView(APIView):
             return Response({'message': 'Payment intent not found'}, status=status.HTTP_200_OK)
 
         if event_type == 'payment_intent.succeeded':
-            process_payment_success(payment.id)
+            try:
+                process_payment_success(payment.id)
+            except ValidationError as e:
+                logger.warning(f"Stock check failed during Stripe payment webhook for Payment #{payment.id}. Refunding. Error: {e}")
+                try:
+                    context = PaymentContext('stripe')
+                    context.refund(payment)
+                except Exception as refund_err:
+                    logger.error(f"Failed to auto-refund Stripe Payment #{payment.id}: {refund_err}")
+                process_payment_failure(payment.id)
         elif event_type in ['payment_intent.payment_failed', 'payment_intent.canceled']:
             process_payment_failure(payment.id)
 
@@ -195,7 +222,15 @@ class BkashWebhookView(APIView):
                 payment.raw_response = query_data.get('raw_response', payment.raw_response)
                 
                 if query_data['status'] == 'success':
-                    process_payment_success(payment.id)
+                    try:
+                        process_payment_success(payment.id)
+                    except ValidationError as e:
+                        logger.warning(f"Stock check failed during bKash POST webhook for Payment #{payment.id}. Refunding. Error: {e}")
+                        try:
+                            context.refund(payment)
+                        except Exception as refund_err:
+                            logger.error(f"Failed to auto-refund bKash Payment #{payment.id}: {refund_err}")
+                        process_payment_failure(payment.id)
                 else:
                     process_payment_failure(payment.id)
             except Exception as e:
@@ -226,7 +261,15 @@ class BkashWebhookView(APIView):
                 payment.raw_response = query_data.get('raw_response', payment.raw_response)
                 
                 if query_data['status'] == 'success':
-                    process_payment_success(payment.id)
+                    try:
+                        process_payment_success(payment.id)
+                    except ValidationError as e:
+                        logger.warning(f"Stock check failed during bKash GET callback for Payment #{payment.id}. Refunding. Error: {e}")
+                        try:
+                            context.refund(payment)
+                        except Exception as refund_err:
+                            logger.error(f"Failed to auto-refund bKash Payment #{payment.id}: {refund_err}")
+                        process_payment_failure(payment.id)
                 else:
                     process_payment_failure(payment.id)
             except Exception as e:

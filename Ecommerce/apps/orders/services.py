@@ -59,6 +59,9 @@ def process_payment_success(payment_id: int):
     Safely process payment success with select_for_update to avoid race conditions.
     Reduces the product stock and updates order and payment statuses.
     """
+    # # Demo/test exception to trigger automatic refund testing
+    # raise ValidationError("Demo exception: Stock not available. Triggering automatic refund.")
+
     with transaction.atomic():
         # Lock the payment record
         try:
